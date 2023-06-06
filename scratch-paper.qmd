@@ -1,0 +1,218 @@
+---
+title: "Homework 5 Scratch Paper"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    code-fold: true 
+    theme: yeti 
+editor: visual
+execute: 
+  message: false 
+  warning: false 
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Set Up 
+
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+library(ggeffects)
+library(performance)
+library(naniar)
+library(flextable)
+library(car)
+library(broom)
+library(corrplot)
+library(AICcmodavg)
+library(GGally)
+```
+
+# Read in Data
+
+```{r}
+plant <- read_csv(here("data", "knb-lter-hfr.109.18", "hf109-01-sarracenia.csv")) |> 
+  clean_names() |> #Clean column names
+  select(totmass, species, feedlevel, sla, chlorophyll, amass, num_lvs, num_phylls) #Select relevant columns
+```
+
+# Visualize missing data
+
+```{r}
+gg_miss_var(plant)
+```
+
+# Subset data by dropping NAs
+
+```{r}
+plant_subset <- plant |> 
+  drop_na(sla, chlorophyll, amass, num_lvs, num_phylls)
+```
+
+# Create a correlation plot
+
+(example writing) to determine the relationships between numerical variables in our dataset, we calculated Pearsons r and visually represented correlation using a correlation plot.
+
+```{r}
+#Calculate Pearson's r for numerical values only 
+plant_cor <- plant_subset |> 
+  select(feedlevel:num_phylls) |> 
+  cor(method = "pearson")
+
+#Create correlation plot
+corrplot(plant_cor, 
+         method = "ellipse", #Change shape of item in cells
+         addCoef.col = "black") #Add coefficient in black text
+```
+
+# Create a plot of each variable compared against the others
+
+```{r}
+plant_subset |> 
+  select(species:num_phylls) |> 
+  ggpairs()
+```
+
+# Starting regression here: 
+
+(example) to determine how species and physiological characteristics predict biomass, we fit multiple linear models
+
+```{r}
+null <- lm(totmass ~ 1, data = plant_subset)
+full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data = plant_subset)
+```
+
+# Diagnostics
+
+We visually assess normality and homoskedasticity of residuals using diagnostic plots for the full model.
+
+```{r}
+par(mfrow = c(2, 2))
+plot(full)
+```
+
+We also tested for normality using the Shapiro-Wilk test (null hypothesis: variable of interest (i.e. the residuals) are normally distributed).
+
+We tested for heteroskedasticity using the Breusch-Pagan test (null hypothesis: variable of interest has constant variance).
+
+```{r}
+check_normality(full)
+```
+
+```{r}
+check_heteroscedasticity(full)
+```
+
+```{r}
+null_log <- lm(log(totmass) ~ 1, data = plant_subset)
+full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data = plant_subset)
+
+plot(full_log)
+```
+
+```{r}
+check_normality(full_log)
+```
+
+```{r}
+check_heteroscedasticity(full_log)
+```
+
+Evaluate multicollinearity:
+
+```{r}
+car::vif(full_log)
+```
+
+We evaluated multicollinearity by calculating generalized variance inflation factor and determined that...
+
+try some more models:
+
+addressing the question: what set of predictor variables best explains the response?
+
+```{r}
+model2_log <- lm(log(totmass) ~ species, data = plant_subset)
+```
+
+check assumptions for model 2:
+
+```{r}
+plot(model2_log)
+```
+
+```{r}
+check_normality(model2_log)
+```
+
+```{r}
+check_heteroscedasticity(model2_log)
+```
+
+compare models using Akaike's Information criterion (AIC) values:
+
+```{r}
+AICc(full_log)
+```
+
+```{r}
+AICc(model2_log)
+```
+
+```{r}
+AICc(null_log)
+```
+
+```{r}
+MuMIn::AICc(full_log, model2_log, null_log)
+```
+
+```{r}
+MuMIn::model.sel(full_log, model2_log, null_log)
+```
+
+We compared models using AIC and chose the model with the lowest value, which was...
+
+# Results
+
+We found that the \_\_\_\_ model including \_\_\_\_\_ predicors best predicted \_\_\_\_ (model summary).
+
+```{r}
+summary(full_log)
+```
+
+```{r}
+summary(full_log)
+
+table <- tidy(full_log, conf.int = TRUE) |> 
+  #Change the p-value numbers if they're really small
+  #Change the estimates, standard error, and t-statistics to round to __ digits
+  #Using mutate
+  #Make it into a flextable
+  flextable() |> 
+   #Fit it to the viewer
+  autofit() 
+```
+
+use ggpredict() to backtransform estimates
+
+```{r}
+model_pred <- ggpredict(full_log, terms = "species", back.transform = TRUE)
+plot(ggpredict(full_log, terms = "species", back.transform = TRUE), add.data = TRUE)
+```
+
+```{r}
+plot(ggpredict(full_log, terms = "chlorophyll", back.transform = TRUE), add.data = TRUE)
+```
+
+```{r}
+plot(ggpredict(full_log, terms = "sla", back.transform = TRUE), add.data = TRUE)
+```
+
+```{r}
+model_pred #Ribbon represents 95% confidence level 
+```
