@@ -22,7 +22,11 @@ c\. Why do you think it could be useful and/or important to predict individual b
 
 d\. What questions are you addressing?
 
+How do Sarracenia characteristics predict biomass?
+
 e\. What hypothesis are you testing?
+
+Null hypothesis is that a multiple linear regression does not predict Sarracenia biomass. Alternative hypothesis is that at least one variable will predict Sarracenia biomass.
 
 f\. Include 3-5 in-text citations of peer-reviewed work.
 
