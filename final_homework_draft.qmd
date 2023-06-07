@@ -14,6 +14,8 @@ bibliography: references.bib
 
 # Introduction
 
+The data was obtained from @ellison2021
+
 a\. What are Sarracenia?
 
 b\. Why might people care about them?
@@ -31,5 +33,26 @@ Null hypothesis is that a multiple linear regression does not predict Sarracenia
 f\. Include 3-5 in-text citations of peer-reviewed work.
 
 # Methods
+
+Sampling methods (these should be summarized from the metadata and cited)\
+b. Description of data organization and processing (1-3 sentences)\
+c. Visualization of missing observations with an accompanying caption and discussion\
+(caption: 1-3 sentences, discussion: 1-3 sentences)\
+d. Visualization of Pearson\'s correlation between variables with an accompanying\
+caption and discussion (caption: 1-3 sentences, discussion: 1-3 sentences)\
+e. Visualization of relationships between variables (not correlation) with an\
+accompanying caption and discussion (caption: 1-3 sentences, discussion: 1-3\
+sentences)\
+f. Creating the null and full model with accompanying discussion (1-3 sentences)\
+g. Visual and statistical assumption checks for the full model with accompanying\
+discussion (1-3 sentences)\
+h. Explanation of any transformation and justification (1-3 sentences)\
+i. Model construction with visual and statistical assumption checks for three\
+additional models with justification (i.e. why did you choose those predictor\
+variables?) (justification: 1-3 sentences per model)\
+j. Variance inflation factor check for the full model with accompanying discussion\
+(discussion: 1-3 sentences)\
+k. Model comparison using the null model, full model, and additional models from part\
+7g
 
 # Results
