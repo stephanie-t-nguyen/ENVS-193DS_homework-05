@@ -1,11 +1,14 @@
 ---
-title: "Final homework draft"
+title: "Final homework Write Up"
+author: "Stephanie Nguyen"
+date: "June 6, 2023"
 format:
   html:
     toc: true
     toc-location: left
     code-fold: true
     theme: yeti
+editor: visual
 execute:
   message: false
   warning: false
@@ -14,35 +17,55 @@ bibliography: references.bib
 
 # Introduction
 
-The data was obtained from @ellison2021
+The *Sarracena* genus are a group of North American carnivorous plants that have radiated into a number of similar but ultimately different species [@stephens2015]. They are characterized by their pitcher shape structures which lures insects and thus are known as the pitcher plants. They typically grow in nitrogen-low and nutrient-poor soils, which includes bogs, wetlands, and fens [@srivastava2011].
 
-a\. What are Sarracenia?
+*Sarracena* are studied for a number of reasons. *Sarracena* play a very important ecological role in their ecosystems and food webs and therefore could be an indicator of an environment's health [@hoekman2010]. Our study aims to investigate how morphological, physiological, and/or taxonomic *Sarracenia* characteristics predict total plant biomass. Being able to predict plant biomass from *Sarracenia* characteristics allows for a faster and non-destructive method to assess the development of the plant, and in extension, ecosystem health.
 
-b\. Why might people care about them?
+Using the data obtained from "Effects of Prey Availability on Sarracena Physiology", our study investigates how *Sarracenia* characteristics predict biomass [@ellison2021]. We hypothesize that *Sarracenia* species, specific leaf area, chlorophyll levels, photosynthetic rate, and/or number of pitchers and phyllodes produced by the plant to be predictors of total plant biomass using multiple linear regression.
 
-c\. Why do you think it could be useful and/or important to predict individual biomass from morphological, physiological, or taxonomic characteristics?
+### Set Up 
 
-d\. What questions are you addressing?
+```{r}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
 
-How do Sarracenia characteristics predict biomass?
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+library(ggeffects)
+library(performance)
+library(naniar)
+library(flextable)
+library(car)
+library(broom)
+library(corrplot)
+library(AICcmodavg)
+library(GGally)
+```
 
-e\. What hypothesis are you testing?
-
-Null hypothesis is that a multiple linear regression does not predict Sarracenia biomass. Alternative hypothesis is that at least one variable will predict Sarracenia biomass.
-
-f\. Include 3-5 in-text citations of peer-reviewed work.
+```{r}
+plant <- read_csv(here("data", "knb-lter-hfr.109.18", "hf109-01-sarracenia.csv")) |> 
+  clean_names() |> #Clean column names
+  dplyr::select(totmass, species, feedlevel, sla, chlorophyll, amass, num_lvs, num_phylls) #Select relevant columns
+```
 
 # Methods
 
-Sampling methods (these should be summarized from the metadata and cited)\
-b. Description of data organization and processing (1-3 sentences)\
-c. Visualization of missing observations with an accompanying caption and discussion\
-(caption: 1-3 sentences, discussion: 1-3 sentences)\
-d. Visualization of Pearson\'s correlation between variables with an accompanying\
-caption and discussion (caption: 1-3 sentences, discussion: 1-3 sentences)\
-e. Visualization of relationships between variables (not correlation) with an\
-accompanying caption and discussion (caption: 1-3 sentences, discussion: 1-3\
-sentences)\
+a\. Ellison et al. made 6 feeding levels, accounting for the sizes of different species, and assigned two of each *Sarracenia* species to each level [@ellison2021]. Total plant biomass, feeding level of wasps, specific leaf area, chlorophyll, total number of phyllodes, and total number of pitchers were measured after the feeding period, while photosynthetic rate was measured prior to treatment [@ellison2021].
+
+b\. The data from "Effects of Prey Availability on Sarracenia Physiology" recorded these physiological, morphological, and taxonomic characteristics of the *Sarracena* into a dataframe called plants. Refer to data dictionary at the bottom of the page for explanations of column names
+
+c\. Then, the dataframe was checked for missing data (Figure 1). Some data points were missing, so rows with missing data were dropped, resulting in a new dataframe called plant_subset. This is the dataset we used going forward with the analysis.
+
+d\. In figure 2, Pearson's correlation coefficients were calculated between every numerical predictor variable. There were a mix of positive and negative correlations. However, none of the correlation values had an absolute value above 0.5, meaning they were all weakly correlated.
+
+e\. To further investigate the relationships between variables, a pair plot was created in figure 3. Figure 3 denotes that there are significant, although weak, correlations between some predictor variables, which is denoted with asterisks.
+
+f\.
+
+\
+\
 f. Creating the null and full model with accompanying discussion (1-3 sentences)\
 g. Visual and statistical assumption checks for the full model with accompanying\
 discussion (1-3 sentences)\
@@ -55,4 +78,192 @@ j. Variance inflation factor check for the full model with accompanying discussi
 k. Model comparison using the null model, full model, and additional models from part\
 7g
 
+```{r}
+gg_miss_var(plant) #Visualize missing data
+```
+
+**Figure 1.** Visualization of Missing Data in "plant" dataframe
+
+The y-axis are the variables (columns) in the dataframe and the x-axis marks how many rows have missing data per variable.
+
+```{r}
+#Drop missing data
+plant_subset <- plant |> 
+  drop_na(sla, chlorophyll, amass, num_lvs, num_phylls)
+```
+
+```{r}
+#Calculate Pearson's r for numerical values only 
+plant_cor <- plant_subset |> 
+  dplyr::select(feedlevel:num_phylls) |> 
+  cor(method = "pearson")
+
+#Create correlation plot
+corrplot(plant_cor, 
+         method = "ellipse", #Change shape of item in cells
+         addCoef.col = "black") #Add coefficient in black text
+```
+
+**Figure 2.** Pearson's correlation plot of predictor variables
+
+The positively correlated predictor variables are colored in blue and Pearson's correlation values of greater than 0, while the negatively correlated predictor variables are colored in red and have a coefficient of lesser than 0.
+
+```{r}
+plant_subset |> 
+  dplyr::select(species:num_phylls) |> 
+  ggpairs()
+```
+
+**Figure 3.** Pair plot of predictor variables
+
+Above the diagonal are Pearson correlation coefficients between the predictor variables, with asterisks indicating a significant correlation. Along the diagonal are density plots for each variable, and below the diagonal are the scatter plots for each variable.
+
+```{r}
+#Create a null and a full model - fit multiple linear models in order to see which one is best
+null <- lm(totmass ~ 1, data = plant_subset)
+#Assume no relationship between total mass and predictor variables 
+
+full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data = plant_subset)
+#Assume predictor variables can predict biomass
+```
+
+### Check full model 
+
+```{r}
+par(mfrow = c(2, 2))
+plot(full)
+```
+
+**Figure 4.** Diagnostic plots for full model
+
+The Residual vs Fitted plot checks for constant variance (homoscedasticity) among the residuals. The Scale-Location plot also checks for homoscedasticity, but using the square root of the residuals; both plots show a change in pattern from more clustered points on the left to more scattered points on the right, suggesting heteroscedasticty.
+
+The Residuals vs Fitted checks for constant variance of residuals, but the clustering of points on the left side of the plot indicators non-homoscedastic residuals, while the Normal Q-Q checks for normality but the tail ends suggest lack of normality. The Scale-Location shows the square root of the standardized residuals, which also suggests heteroscedastic residuals because there is a pattern of clustering to the spreading of points from left to right. Lastly, the Residuals vs Leverage plot shows outliers in the data, and there do not appear to be any.
+
+```{r}
+check_normality(full) #The data is likely not normal. 
+```
+
+```{r}
+check_heteroscedasticity(full) #The data is likely heteroscedastic. 
+```
+
+### Check full log model
+
+```{r}
+#Log transformations of null and full model
+null_log <- lm(log(totmass) ~ 1, data = plant_subset)
+full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data = plant_subset)
+
+par(mfrow = c(2, 2))
+plot(full_log)
+```
+
+**Figure 5.** Diagnostic plots for full log model
+
+The Residual vs Fitted and Scale-Location plot checks for homoscedasticity; both plots don't show can non-random patterning, indicating homoscedasticity. The Normal Q-Q plot checks for data normality; the data fits the linear line indicating normality. Lastly, the Residuals vs Leverage checks for outliers outside Cook's distance, but there are no outliers.
+
+```{r}
+check_normality(full_log)
+```
+
+```{r}
+check_heteroscedasticity(full_log)
+```
+
+Evaluate multicollinearity:
+
+```{r}
+car::vif(full_log)
+```
+
+We evaluated multicollinearity by calculating generalized variance inflation factor and determined that...
+
+try some more models:
+
+addressing the question: what set of predictor variables best explains the response?
+
+### Try more models
+
+```{r}
+#Create other models 
+model2_log <- lm(log(totmass) ~ species, data = plant_subset) #Log total mass, predictor variable is species 
+model3_log <- lm(log(totmass) ~ species + feedlevel, data = plant_subset) #Log total mass, predictor variable is species and feedlevel
+model4_log <- lm(log(totmass) ~ species + feedlevel + num_lvs, data = plant_subset) #Log total mass, predictor variable is species, feedlevel, and number of pitchers and phyllodes produced by plant 
+```
+
+We evaluated multicollinearity by calculating generalized variance inflation factor and determined that...
+
+try some more models:
+
+addressing the question: what set of predictor variables best explains the response?
+
+check assumptions for model 2:
+
+```{r}
+par(mfrow = c(2, 2))
+plot(model2_log)
+```
+
+```{r}
+check_normality(model2_log)
+```
+
+```{r}
+check_heteroscedasticity(model2_log)
+```
+
+### Check AIC of models 
+
+```{r}
+AICc(full_log)
+```
+
+```{r}
+AICc(model2_log)
+```
+
+```{r}
+AICc(null_log)
+```
+
+```{r}
+MuMIn::AICc(full_log, model2_log, null_log)
+```
+
+```{r}
+MuMIn::model.sel(full_log, model2_log, null_log)
+```
+
 # Results
+
+A description of the best model and how you chose it, with a summary of model\
+results (parenthetical and/or table, 1-3 sentences)\
+b. Interpretation of your chosen model (1-3 sentences)\
+c. Visualization of model predictions for biomass as a function of the predictor\
+variable of your choice with an accompanying caption (caption: 1-3 sentences)\
+d. Discussion of results: what does this model mean biologically? (1-3 sentences)
+
+```{r}
+summary(full_log)
+```
+
+### Data Dictionary 
+
+Below is a data dictionary for variables in the plants dataframe.
+
+-   totmass = total plant biomass
+
+-   species = what species of pitcher plant within the genus Sarracenia
+
+-   feedlevel = grams of wasp fed per week
+
+-   sla = specific leaf area in cm2/g
+
+-   chlorophyll = chlorophyll context in mg/g
+
+-   amass = photosynthetic rate in nmol CO2 x g-1 x s-1
+
+-   num_lvs = number of phyllodes AND pitchers
+
+-   num_phylls = number of phyllodes
