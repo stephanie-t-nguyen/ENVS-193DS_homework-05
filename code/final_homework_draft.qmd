@@ -17,7 +17,11 @@ bibliography: references.bib
 
 Link to Github repo: https://github.com/stephanie-t-nguyen/ENVS-193DS_homework-05
 
-Link to rendered HTML: \[?????????\]
+Link to rendered HTML: https://stephanie-t-nguyen.github.io/ENVS-193DS_homework-05/code/final_homework_draft.html
+
+\<href\> https://stephanie-t-nguyen.github.io/ENVS-193DS_homework-05/code/final_homework_draft.html
+
+\<href\> https://stephanie-t-nguyen.github.io/ENVS-193DS_homework-05/code/final_homework_draft.html \</href\>
 
 # Introduction
 

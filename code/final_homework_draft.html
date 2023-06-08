@@ -135,12 +135,15 @@ div.csl-indent {
   </ul></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
   <ul class="collapse">
-  <li><a href="#check-full-model" id="toc-check-full-model" class="nav-link" data-scroll-target="#check-full-model">Check full model</a></li>
-  <li><a href="#check-full-log-model" id="toc-check-full-log-model" class="nav-link" data-scroll-target="#check-full-log-model">Check full log model</a></li>
-  <li><a href="#try-more-models" id="toc-try-more-models" class="nav-link" data-scroll-target="#try-more-models">Try more models</a></li>
+  <li><a href="#full-model" id="toc-full-model" class="nav-link" data-scroll-target="#full-model">Full Model</a></li>
+  <li><a href="#full-log-model" id="toc-full-log-model" class="nav-link" data-scroll-target="#full-log-model">Full Log Model</a></li>
+  <li><a href="#additional-models" id="toc-additional-models" class="nav-link" data-scroll-target="#additional-models">Additional Models</a></li>
   <li><a href="#check-aic-of-models" id="toc-check-aic-of-models" class="nav-link" data-scroll-target="#check-aic-of-models">Check AIC of models</a></li>
   </ul></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
+  <ul class="collapse">
+  <li><a href="#data-dictionary" id="toc-data-dictionary" class="nav-link" data-scroll-target="#data-dictionary">Data Dictionary</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -176,6 +179,8 @@ div.csl-indent {
 
 </header>
 
+<p>Link to Github repo: https://github.com/stephanie-t-nguyen/ENVS-193DS_homework-05</p>
+<p>Link to rendered HTML: https://stephanie-t-nguyen.github.io/ENVS-193DS_homework-05/code/final_homework_draft.html</p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>The <em>Sarracena</em> genus are a group of North American carnivorous plants that have radiated into a number of similar but ultimately different species <span class="citation" data-cites="stephens2015">(<a href="#ref-stephens2015" role="doc-biblioref">Stephens et al. 2015</a>)</span>. They are characterized by their pitcher shape structures which lures insects and thus are known as the pitcher plants. They typically grow in nitrogen-low and nutrient-poor soils, which includes bogs, wetlands, and fens <span class="citation" data-cites="srivastava2011">(<a href="#ref-srivastava2011" role="doc-biblioref">Srivastava et al. 2011</a>)</span>.</p>
@@ -218,19 +223,14 @@ div.csl-indent {
 </section>
 <section id="methods" class="level1">
 <h1>Methods</h1>
-<p>a. Scientists made 6 feeding levels, accounting for the sizes of different species, and assigned two of each <em>Sarracenia</em> species to each level <span class="citation" data-cites="ellison2021">(<a href="#ref-ellison2021" role="doc-biblioref">Ellison and Farnsworth 2021</a>)</span>. Total plant biomass, feeding level of wasps, specific leaf area, chlorophyll, total number of phyllodes, and total number of pitchers were measured after the feeding period, while photosynthetic rate was measured prior to treatment <span class="citation" data-cites="ellison2021">(<a href="#ref-ellison2021" role="doc-biblioref">Ellison and Farnsworth 2021</a>)</span>.</p>
-<p>b. The data from “Effects of Prey Availability on Sarracenia Physiology” was checked for missing data in Figure 1 <span class="citation" data-cites="ellison2021">(<a href="#ref-ellison2021" role="doc-biblioref">Ellison and Farnsworth 2021</a>)</span>.</p>
-<p><img src="images/paste-F5BDD214.png" class="img-fluid"></p>
-<p>[write here???? ]</p>
-<p>a. Sampling methods (these should be summarized from the metadata and cited)<br>
-b. Description of data organization and processing (1-3 sentences)<br>
-c.&nbsp;Visualization of missing observations with an accompanying caption and discussion<br>
-(caption: 1-3 sentences, discussion: 1-3 sentences)<br>
-d.&nbsp;Visualization of Pearson's correlation between variables with an accompanying<br>
-caption and discussion (caption: 1-3 sentences, discussion: 1-3 sentences)<br>
-e. Visualization of relationships between variables (not correlation) with an<br>
-accompanying caption and discussion (caption: 1-3 sentences, discussion: 1-3<br>
-sentences)<br>
+<p>a. Ellison et al.&nbsp;made 6 feeding levels, accounting for the sizes of different species, and assigned two of each <em>Sarracenia</em> species to each level <span class="citation" data-cites="ellison2021">(<a href="#ref-ellison2021" role="doc-biblioref">Ellison and Farnsworth 2021</a>)</span>. Total plant biomass, feeding level of wasps, specific leaf area, chlorophyll, total number of phyllodes, and total number of pitchers were measured after the feeding period, while photosynthetic rate was measured prior to treatment <span class="citation" data-cites="ellison2021">(<a href="#ref-ellison2021" role="doc-biblioref">Ellison and Farnsworth 2021</a>)</span>.</p>
+<p>b. The data from “Effects of Prey Availability on Sarracenia Physiology” recorded these physiological, morphological, and taxonomic characteristics of the <em>Sarracena</em> into a dataframe called plants. Refer to data dictionary at the bottom of the page for explanations of column names</p>
+<p>c. Then, the dataframe was checked for missing data (Figure 1). Some data points were missing, so rows with missing data were dropped, resulting in a new dataframe called plant_subset. This is the dataset we used going forward with the analysis.</p>
+<p>d. In figure 2, Pearson’s correlation coefficients were calculated between every numerical predictor variable. There were a mix of positive and negative correlations. However, none of the correlation values had an absolute value above 0.5, meaning they were all weakly correlated.</p>
+<p>e. To further investigate the relationships between variables, a pair plot was created in figure 3. Figure 3 denotes that there are significant, although weak, correlations between some predictor variables, which is denoted with asterisks.</p>
+<p>f.</p>
+<p><br>
+<br>
 f.&nbsp;Creating the null and full model with accompanying discussion (1-3 sentences)<br>
 g. Visual and statistical assumption checks for the full model with accompanying<br>
 discussion (1-3 sentences)<br>
@@ -304,8 +304,8 @@ k. Model comparison using the null model, full model, and additional models from
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Assume predictor variables can predict biomass</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<section id="check-full-model" class="level3">
-<h3 class="anchored" data-anchor-id="check-full-model">Check full model</h3>
+<section id="full-model" class="level3">
+<h3 class="anchored" data-anchor-id="full-model">Full Model</h3>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -338,8 +338,8 @@ k. Model comparison using the null model, full model, and additional models from
 </div>
 </div>
 </section>
-<section id="check-full-log-model" class="level3">
-<h3 class="anchored" data-anchor-id="check-full-log-model">Check full log model</h3>
+<section id="full-log-model" class="level3">
+<h3 class="anchored" data-anchor-id="full-log-model">Full Log Model</h3>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -395,8 +395,8 @@ num_phylls   2.995510  1        1.730754</code></pre>
 <p>try some more models:</p>
 <p>addressing the question: what set of predictor variables best explains the response?</p>
 </section>
-<section id="try-more-models" class="level3">
-<h3 class="anchored" data-anchor-id="try-more-models">Try more models</h3>
+<section id="additional-models" class="level3">
+<h3 class="anchored" data-anchor-id="additional-models">Additional Models</h3>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -549,7 +549,21 @@ Multiple R-squared:  0.8687,    Adjusted R-squared:  0.8461
 F-statistic: 38.38 on 15 and 87 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
+<section id="data-dictionary" class="level3">
+<h3 class="anchored" data-anchor-id="data-dictionary">Data Dictionary</h3>
+<p>Below is a data dictionary for variables in the plants dataframe.</p>
+<ul>
+<li><p>totmass = total plant biomass</p></li>
+<li><p>species = what species of pitcher plant within the genus Sarracenia</p></li>
+<li><p>feedlevel = grams of wasp fed per week</p></li>
+<li><p>sla = specific leaf area in cm2/g</p></li>
+<li><p>chlorophyll = chlorophyll context in mg/g</p></li>
+<li><p>amass = photosynthetic rate in nmol CO2 x g-1 x s-1</p></li>
+<li><p>num_lvs = number of phyllodes AND pitchers</p></li>
+<li><p>num_phylls = number of phyllodes</p></li>
+</ul>
 
+</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
