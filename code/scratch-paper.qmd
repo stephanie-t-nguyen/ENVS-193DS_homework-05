@@ -16,7 +16,7 @@ execute:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-# Set Up 
+# Set Up
 
 ```{r}
 library(tidyverse)
@@ -78,12 +78,12 @@ plant_subset |>
   ggpairs()
 ```
 
-# Starting regression here: 
+# Starting regression here:
 
 (example) to determine how species and physiological characteristics predict biomass, we fit multiple linear models
 
 ```{r}
-null <- lm(totmass ~ 1, data = plant_subset)
+null <- lm(totmass ~ 1, data = plant_subset) #Assume no relationship between total mass and predictor variables 
 full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data = plant_subset)
 ```
 
