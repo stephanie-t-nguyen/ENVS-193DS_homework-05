@@ -1,6 +1,6 @@
 # ENVS-193DS_homework-05
 
-###Project: Multiple Linear Regression Model of Sarracenia Biomass
+### Project: Multiple Linear Regression Model of Sarracenia Biomass
 
 The following uses data from EDI Data Portal (<https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-hfr.109.18>) and uses multiple linear regression model to answer the question: how do morphological, physiological, and/or taxonomic Sarracenia characteristics predict biomass? 
 

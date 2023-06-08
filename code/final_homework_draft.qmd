@@ -131,7 +131,7 @@ full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs +
 #Assume predictor variables can predict biomass
 ```
 
-### Check full model
+### Full Model
 
 ```{r}
 par(mfrow = c(2, 2))
@@ -152,7 +152,7 @@ check_normality(full) #The data is likely not normal.
 check_heteroscedasticity(full) #The data is likely heteroscedastic. 
 ```
 
-### Check full log model
+### Full Log Model
 
 ```{r}
 #Log transformations of null and full model
@@ -187,7 +187,7 @@ try some more models:
 
 addressing the question: what set of predictor variables best explains the response?
 
-### Try more models
+### Additional Models
 
 ```{r}
 #Create other models 
