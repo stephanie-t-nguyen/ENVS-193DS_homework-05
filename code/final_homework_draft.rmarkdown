@@ -15,6 +15,7 @@ execute:
 bibliography: references.bib
 ---
 
+
 Links: [rendered HTML page](@https://stephanie-t-nguyen.github.io/ENVS-193DS_homework-05/code/final_homework_draft.html), [Github repo](@https://github.com/stephanie-t-nguyen/ENVS-193DS_homework-05)
 
 # Introduction
@@ -26,6 +27,7 @@ The *Sarracena* genus are a group of North American carnivorous plants that have
 Using the data obtained from "Effects of Prey Availability on Sarracena Physiology", our study investigates how *Sarracenia* characteristics predict biomass [@ellison2021]. Our null hypothesis states that none of the listed variables can predict plant biomass. Our alternative hypothesis is that *Sarracenia* species, specific leaf area, chlorophyll levels, photosynthetic rate, feedlevel, and/or number of pitchers and phyllodes produced by the plant to be predictors of total plant biomass under multiple linear regression.
 
 ### Set Up
+
 
 ```{r}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -52,6 +54,7 @@ plant <- read_csv(here("data", "knb-lter-hfr.109.18", "hf109-01-sarracenia.csv")
   dplyr::select(totmass, species, feedlevel, sla, chlorophyll, amass, num_lvs, num_phylls) #Select relevant columns
 ```
 
+
 # Methods
 
 Ellison et al. made 6 feeding levels, accounting for the sizes of different species, and assigned two of each *Sarracenia* species to each level [@ellison2021]. Total plant biomass, feeding level of wasps, specific leaf area, chlorophyll, total number of phyllodes, and total number of pitchers were measured after the feeding period, while photosynthetic rate was measured prior to treatment [@ellison2021]. The data from "Effects of Prey Availability on Sarracenia Physiology" recorded these physiological, morphological, and taxonomic characteristics of the *Sarracena* into a dataframe called plants. Refer to data dictionary at the bottom of the page for explanations of column names.
@@ -76,13 +79,16 @@ When the full model was checked for variance inflation factors (VIF), none of th
 
 Lastly, a Akaike Information Criterion (AIC) check was done on the full log model, null model, and models 2-4. The full log model had the lowest AIC value, indicating the full log model had the best predictive capacity and thus is the most fit model.
 
+
 ```{r}
 gg_miss_var(plant) #Visualize missing data
 ```
 
+
 **Figure 1.** Visualization of Missing Data in "plant" dataframe
 
 The y-axis are the variables (columns) in the dataframe and the x-axis marks how many rows have missing data per variable.
+
 
 ```{r}
 #Drop missing data
@@ -102,9 +108,11 @@ corrplot(plant_cor,
          addCoef.col = "black") #Add coefficient in black text
 ```
 
+
 **Figure 2.** Pearson's correlation plot of predictor variables
 
 The positively correlated predictor variables are colored in blue and Pearson's correlation values of greater than 0, while the negatively correlated predictor variables are colored in red and have a coefficient of lesser than 0.
+
 
 ```{r}
 plant_subset |> 
@@ -112,9 +120,11 @@ plant_subset |>
   ggpairs()
 ```
 
+
 **Figure 3.** Pair plot of predictor variables
 
 Above the diagonal are Pearson correlation coefficients between the predictor variables, with asterisks indicating a significant correlation. Along the diagonal are density plots for each variable, and below the diagonal are the scatter plots for each variable.
+
 
 ```{r}
 #Create a null and a full model - fit multiple linear models in order to see which one is best
@@ -126,18 +136,22 @@ full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs +
 #Assume predictor variables can predict biomass
 ```
 
+
 ### Full Model
+
 
 ```{r}
 par(mfrow = c(2, 2))
 plot(full)
 ```
 
+
 **Figure 4.** Diagnostic plots for full model
 
 The Residual vs Fitted plot checks for constant variance (homoscedasticity) among the residuals. The Scale-Location plot also checks for homoscedasticity, but using the square root of the residuals; both plots show a change in pattern from more clustered points on the left to more scattered points on the right, suggesting heteroscedasticty.
 
 The Residuals vs Fitted checks for constant variance of residuals, but the clustering of points on the left side of the plot indicators non-homoscedastic residuals, while the Normal Q-Q checks for normality but the tail ends suggest lack of normality. The Scale-Location shows the square root of the standardized residuals, which also suggests heteroscedastic residuals because there is a pattern of clustering to the spreading of points from left to right. Lastly, the Residuals vs Leverage plot shows outliers in the data, and there do not appear to be any.
+
 
 ```{r}
 check_normality(full) #The data is likely not normal. 
@@ -147,7 +161,9 @@ check_normality(full) #The data is likely not normal.
 check_heteroscedasticity(full) #The data is likely heteroscedastic. 
 ```
 
+
 ### Full Log Model
+
 
 ```{r}
 #Log transformations of null and full model
@@ -158,9 +174,11 @@ par(mfrow = c(2, 2))
 plot(full_log)
 ```
 
+
 **Figure 5.** Diagnostic plots for full log model
 
 The Residual vs Fitted and Scale-Location plot checks for homoscedasticity; both plots don't show can non-random patterning, indicating homoscedasticity. The Normal Q-Q plot checks for data normality; the data fits the linear line indicating normality. Lastly, the Residuals vs Leverage checks for outliers outside Cook's distance, but there are no outliers.
+
 
 ```{r}
 check_normality(full_log)
@@ -170,7 +188,9 @@ check_normality(full_log)
 check_heteroscedasticity(full_log)
 ```
 
+
 ### Additional Models
+
 
 ```{r}
 #Create other models 
@@ -184,9 +204,11 @@ par(mfrow = c(2, 2)) #Check assumptions for model 2
 plot(model2_log)
 ```
 
+
 **Figure 6.** Diagnostic plots for model 2
 
 The Residual vs Fitted and Scale-Location plot checks for homoscedasticity; both plots don't show can non-random patterning, indicating homoscedasticity. The Normal Q-Q plot checks for data normality; the data fits the linear line indicating normality. Lastly, the Residuals vs Leverage checks for outliers outside Cook's distance, but there are no outliers.
+
 
 ```{r}
 check_normality(model2_log) #Check assumptions for model 2
@@ -198,9 +220,11 @@ par(mfrow = c(2, 2)) #Check assumptions for model 3
 plot(model3_log)
 ```
 
+
 **Figure 7.** Diagnostic plots for model 3
 
 The Residual vs Fitted and Scale-Location plot checks for homoscedasticity; both plots don't show can non-random patterning, indicating homoscedasticity. The Normal Q-Q plot checks for data normality; the data fits the linear line indicating normality. Lastly, the Residuals vs Leverage checks for outliers outside Cook's distance, but there are no outliers.
+
 
 ```{r}
 check_normality(model3_log) #Check assumptions for model 2
@@ -217,18 +241,22 @@ check_normality(model4_log) #Check assumptions for model 2
 check_heteroscedasticity(model4_log)
 ```
 
+
 **Figure 8.** Diagnostic plots for model 4
 
 The Residual vs Fitted and Scale-Location plot checks for homoscedasticity; both plots don't show can non-random patterning, indicating homoscedasticity. The Normal Q-Q plot checks for data normality; the data fits the linear line indicating normality. Lastly, the Residuals vs Leverage checks for outliers outside Cook's distance, but there are no outliers.
 
 ### Variance Inflation Factor (VIF) Check
 
+
 ```{r}
 #Evaluate multicollinearity 
 car::vif(full_log) #Variance inflation factor check for full model 
 ```
 
+
 ### Akaike Information Criterion (AIC) Check 
+
 
 ```{r}
 AICc(full_log)
@@ -245,11 +273,13 @@ MuMIn::AICc(full_log, model2_log, model3_log, model4_log, null_log)
 MuMIn::model.sel(full_log, model2_log, null_log)
 ```
 
+
 # Results
 
 The full log model, which includes all 7 predictor variables (*Sarracenia* species, specific leaf area, chlorophyll levels, photosynthetic rate, feedlevel, and/or number of pitchers and phyllodes) was the best fit model. The full model conformed to assumptions of homoscedasticity and normality for linear regression, shown in Figure 5. The model also had the lowest AIC value, indicating it was the best-fitted model, even when compared with other models that had different combinations of predictor variables.
 
 The extremely small p-value of the full log model (2.2e-16) suggests there is sufficient evidence to reject the null hypothesis. Thus, there is evidence suggesting that multiple variables come together to predict biomass. Biologically, this means that the seven predictor variables all likely correlate with plant biomass. Chlorophyll levels correspond with photosynthetic rate, which in turn can affect the plant's ability to produce energy and grow. The number of pitchers and phyllodes could also predict biomass because heavier plants are likely heavier because they have more structures.
+
 
 ```{r}
 summary(full_log)
@@ -273,13 +303,16 @@ model_pred <- ggpredict(full_log, terms = "species", back.transform = TRUE)
 plot(ggpredict(full_log, terms = "species", back.transform = TRUE), add.data = TRUE)
 ```
 
+
 **Figure 9**. Visualization of species as a predictor of biomass
 
 The x-axis lists the ten species of *Sarracenia* and the y-axis represents the total biomass of the plant. The plot shows that members of the same species have similar biomasses as each other. Some species have a larger biomass while others have a smaller biomass.
 
+
 ```{r}
 model_pred #Predicted biomasses per species
 ```
+
 
 ### Data Dictionary
 
@@ -300,3 +333,4 @@ Below is a data dictionary for variables in the plants dataframe.
 -   num_lvs = number of phyllodes AND pitchers
 
 -   num_phylls = number of phyllodes
+
